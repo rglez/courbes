@@ -4,7 +4,7 @@ Parser for single and multiple *.lis files yielded by the curves+ software
 """
 import os
 from collections import defaultdict
-from os.path import basename, join
+from os.path import join
 
 import numpy as np
 import pandas as pd
@@ -46,16 +46,34 @@ def write_descriptors(out_dir, descriptors):
 
     for descriptor in descriptors.keys():
         try:
+            # Print the raw dataframe
             df = descriptors[descriptor].T
             out_file = join(out_dir, f'{descriptor}.txt')
             with open(out_file, 'wt') as dec_file:
-                df.to_string(dec_file)
+                df.round(4).to_string(dec_file)
+
+            # Print the stats dataframe
+            df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
+            df_stats.loc['sem'] = df.sem()
+            out_file = join(out_dir, f'{descriptor}_stats.txt')
+            with open(out_file, 'wt') as dec_file:
+                df_stats.round(4).to_string(dec_file)
+
         except AttributeError:
             for sub_case in descriptors[descriptor]:
+                # Print the raw dataframe
                 df = descriptors[descriptor][sub_case].T
                 out_file = join(out_dir, f'{descriptor}_{sub_case}.txt')
                 with open(out_file, 'wt') as dec_file:
-                    df.to_string(dec_file)
+                    df.round(4).to_string(dec_file)
+
+                # Print the stats dataframe
+                df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
+                df_stats.loc['sem'] = df.sem()
+                out_file = join(out_dir, f'{descriptor}_stats.txt')
+                with open(out_file, 'wt') as dec_file:
+                    df_stats.round(4).to_string(dec_file)
+
 
 class CourbesParserSingle:
     """
@@ -384,29 +402,25 @@ class CourbesParserMulti:
             descriptors.update({descriptor: df})
         return descriptors
 
-    def write_descriptors(self):
-        self.descriptors_bp_axes = None
-        self.descriptors_bp_inters = None
-        self.descriptors_bp_intras = None
-        self.descriptors_backbones = None
-        self.descriptors_grooves = None
-
-
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
-# input_dir = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/sno/MD1/'
-#
-# lis_traj_raw = list(cmn.recursive_finder('analysis-*.lis', input_dir))
-# lis_traj = sorted(lis_traj_raw,
-#                   key=lambda x: int(basename(x).split('-')[1].split('.')[0]))
-#
-# self = CourbesParserMulti(lis_traj)
-# self.concat_info()
-# self.get_descriptors()
-#
-# axis = self.descriptors_bp_axes
-# intra = self.descriptors_bp_inters
-# inter = self.descriptors_bp_intras
-# backbone = self.descriptors_backbones
-# groove = self.descriptors_grooves
+from os.path import basename
+input_dir = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/sno/MD1/'
+
+lis_traj_raw = list(cmn.recursive_finder('analysis-*.lis', input_dir))
+lis_traj = sorted(lis_traj_raw,
+                  key=lambda x: int(basename(x).split('-')[1].split('.')[0]))
+
+self = CourbesParserMulti(lis_traj)
+self.concat_info()
+self.get_descriptors()
+
+axis = self.descriptors_bp_axes
+intra = self.descriptors_bp_inters
+inter = self.descriptors_bp_intras
+backbone = self.descriptors_backbones
+groove = self.descriptors_grooves
+
+
+write_descriptors('/home/roy.gonzalez-aleman/RoyHub/courbes/', axis)
