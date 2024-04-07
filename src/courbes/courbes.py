@@ -8,7 +8,8 @@ import config
 import parsing
 
 # Prelude
-args = config.Config(sys.argv[1])
+# args = config.Config(sys.argv[1])
+args = config.Config('/home/roy.gonzalez-aleman/RoyHub/courbes/tests/examples/1kx5_SOH.conf')
 os.chdir(args.output_dir)
 curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 

@@ -68,7 +68,10 @@ def write_descriptors(out_dir, descriptors):
                     df.round(4).to_string(dec_file)
 
                 # Print the stats dataframe
-                df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
+                try:
+                    df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
+                except KeyError:
+                    continue
                 df_stats.loc['sem'] = df.sem()
                 out_file = join(out_dir, f'{descriptor}_stats.txt')
                 with open(out_file, 'wt') as dec_file:
@@ -405,22 +408,22 @@ class CourbesParserMulti:
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
-from os.path import basename
-input_dir = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/sno/MD1/'
-
-lis_traj_raw = list(cmn.recursive_finder('analysis-*.lis', input_dir))
-lis_traj = sorted(lis_traj_raw,
-                  key=lambda x: int(basename(x).split('-')[1].split('.')[0]))
-
-self = CourbesParserMulti(lis_traj)
-self.concat_info()
-self.get_descriptors()
-
-axis = self.descriptors_bp_axes
-intra = self.descriptors_bp_inters
-inter = self.descriptors_bp_intras
-backbone = self.descriptors_backbones
-groove = self.descriptors_grooves
-
-
-write_descriptors('/home/roy.gonzalez-aleman/RoyHub/courbes/', axis)
+# from os.path import basename
+# input_dir = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/sno/MD1/'
+#
+# lis_traj_raw = list(cmn.recursive_finder('analysis-*.lis', input_dir))
+# lis_traj = sorted(lis_traj_raw,
+#                   key=lambda x: int(basename(x).split('-')[1].split('.')[0]))
+#
+# self = CourbesParserMulti(lis_traj)
+# self.concat_info()
+# self.get_descriptors()
+#
+# axis = self.descriptors_bp_axes
+# intra = self.descriptors_bp_inters
+# inter = self.descriptors_bp_intras
+# backbone = self.descriptors_backbones
+# groove = self.descriptors_grooves
+#
+#
+# write_descriptors('/home/roy.gonzalez-aleman/RoyHub/courbes/', axis)

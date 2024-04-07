@@ -1,0 +1,6 @@
+mdtraj~=1.9.9
+numpy~=1.26.4
+pandas~=2.2.1
+importlib_metadata~=7.1.0
+ipython~=8.22.2
+setuptools~=68.2.2

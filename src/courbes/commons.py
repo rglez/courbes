@@ -3,7 +3,11 @@ import fnmatch
 import os
 import subprocess
 from collections import defaultdict
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import mdtraj as md
+import pandas as pd
 
 
 def recursive_defaultdict():
@@ -119,6 +123,42 @@ def slice_traj(topo, traj, selection, chunk_size, init=0, stride=1):
 
     for chunk_traj in iter_traj:
         yield chunk_traj.restrict_atoms(sele)
+
+
+def generic_matplotlib(width):
+    """
+    Set generic values for matplotlib's globals
+
+    Args:
+        width: tuple of fig size
+    """
+    plt.rcParams['figure.dpi'] = 600
+    plt.rcParams['figure.figsize'] = width
+    plt.rcParams["font.family"] = "Times New Roman"
+    plt.rcParams['axes.linewidth'] = 4
+
+
+def reset_matplotlib():
+    """
+    Reset the default values of matlotlib
+    Returns:
+
+    """
+    mpl.rcParams.update(mpl.rcParamsDefault)
+
+
+def load_raw_df(df_path):
+    """
+    Load raw dataframe as formatted by courbes+
+
+    Args:
+        df_path: path to the raw txt
+
+    Returns:
+        parsed raw dataframe
+    """
+    df_raw = pd.read_table(df_path, header=0, sep='\s+')
+    return df_raw
 
 # =============================================================================
 # Debugging & Testing Area
