@@ -2,7 +2,7 @@
 import configparser
 import os
 
-import commons as cmn
+import courbes.commons as cmn
 
 
 class Config:
