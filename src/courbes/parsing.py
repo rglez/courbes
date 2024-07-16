@@ -34,6 +34,35 @@ def get_start_line(string_char, n):
     return string_char.strip()[:n]
 
 
+def get_dataframe_stats(df):
+    """
+    Get statistical report from a dataframe
+    Args:
+        df: input dataframe
+
+    Returns:
+        a dataframe with statistics
+    """
+    data = ['mean', 'std', 'min', 'max']
+    try:
+        df_stats = df.describe().loc[data].round(2)
+        df_stats.loc['sem'] = df.sem()
+        return df_stats
+    except KeyError:
+        return pd.DataFrame()
+
+
+def write_dataframe(out_path, df):
+    """
+    Write a dataframe as a tabular .txt
+    Args:
+        out_path: output name
+        df: formatted dataframe
+    """
+    with open(out_path, 'wt') as dec_file:
+        df.round(4).to_string(dec_file)
+
+
 def write_descriptors(out_dir, descriptors):
     """
     Write a dataframe corresponding to a curves+ descriptor as a txt file
@@ -45,37 +74,23 @@ def write_descriptors(out_dir, descriptors):
     os.makedirs(out_dir, exist_ok=True)
 
     for descriptor in descriptors.keys():
+        # Treat other cases
         try:
-            # Print the raw dataframe
             df = descriptors[descriptor].T
-            out_file = join(out_dir, f'{descriptor}.txt')
-            with open(out_file, 'wt') as dec_file:
-                df.round(4).to_string(dec_file)
-
-            # Print the stats dataframe
-            df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
-            df_stats.loc['sem'] = df.sem()
-            out_file = join(out_dir, f'{descriptor}_stats.txt')
-            with open(out_file, 'wt') as dec_file:
-                df_stats.round(4).to_string(dec_file)
-
+            stats = get_dataframe_stats(df)
+            df_out = join(out_dir, f'{descriptor}.txt')
+            stats_out = join(out_dir, f'{descriptor}_stats.txt')
+            write_dataframe(df_out, df)
+            write_dataframe(stats_out, stats)
+        # Treat intra & backbone cases
         except AttributeError:
             for sub_case in descriptors[descriptor]:
-                # Print the raw dataframe
                 df = descriptors[descriptor][sub_case].T
-                out_file = join(out_dir, f'{descriptor}_{sub_case}.txt')
-                with open(out_file, 'wt') as dec_file:
-                    df.round(4).to_string(dec_file)
-
-                # Print the stats dataframe
-                try:
-                    df_stats = df.describe().loc[['mean', 'std', 'min', 'max']].round(2)
-                except KeyError:
-                    continue
-                df_stats.loc['sem'] = df.sem()
-                out_file = join(out_dir, f'{descriptor}_stats.txt')
-                with open(out_file, 'wt') as dec_file:
-                    df_stats.round(4).to_string(dec_file)
+                stats = get_dataframe_stats(df)
+                df_out = join(out_dir, f'{descriptor}_{sub_case}.txt')
+                stats_out = join(out_dir, f'{descriptor}_{sub_case}_stats.txt')
+                write_dataframe(df_out, df)
+                write_dataframe(stats_out, stats)
 
 
 class CourbesParserSingle:

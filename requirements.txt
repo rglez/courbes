@@ -4,3 +4,8 @@ pandas~=2.2.1
 importlib_metadata~=7.1.0
 ipython~=8.22.2
 setuptools~=68.2.2
+
+mdanalysis~=2.7.0
+prolif~=2.0.3
+scipy~=1.11.4
+pyna~=0.1.0a0
