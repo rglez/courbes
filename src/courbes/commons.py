@@ -85,6 +85,18 @@ def clean():
     [os.remove(y) for x in trash for y in x]
 
 
+def get_numbering_default(n_bases):
+    init_strand = n_bases * 2
+    end_strand = n_bases + 1
+    numbering = f"""
+        2 1 -1 0 0
+        1:{n_bases}
+        {init_strand}:{end_strand}
+        !
+        """
+    return numbering
+
+
 class CurvesWrapper:
     """
     Wrapper for curves+ related operations
@@ -94,7 +106,26 @@ class CurvesWrapper:
         self.exe_path = exe_path
         self.lib_path = lib_path
 
-    def run(self, pdb_path, lis_path, n_bases):
+    def run(self, pdb_path, lis_path, strands_lines):
+        """
+        Run curves+ on a given pdb file
+
+        Args:
+            pdb_path: path to input pdb
+            lis_path: pah to output .lis
+            n_bases: number of bases
+        """
+        # todo: generalize
+
+        command = f"""{self.exe_path} <<!
+        &inp file={pdb_path}, lis={lis_path},
+        lib={self.lib_path}, &end
+        {strands_lines}
+        !"""
+        subprocess.run(command, shell=True)
+        clean()
+
+    def run_old(self, pdb_path, lis_path, n_bases, numbering='default'):
         """
         Run curves+ on a given pdb file
 
@@ -204,17 +235,18 @@ def unpickle_from_file(file_name):
     with open(file_name, 'rb') as file:
         data = pickle.load(file)
     return data
+
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
 # CURVES+
-# curve_exe = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/programs/curves_files/Cur+'
-# input_pdb = 'frame.4.pdb'
-# output_lis = ''.join([x for x in input_pdb.split('.')[:-1]])
+# curve_exe = '/home/gonzalezroy/RoyHub/courbes/programs/curves_files/Cur+'
+# pdb_path = '/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/polyAT/AA_pairs/traj13-27_1000ns/tmp_1.pdb'
+# lis_path = pdb_path.replace('.pdb', '')
 # lib_path = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/programs/curves_files/standard'
-#
+
 # self = CurvesWrapper(curve_exe, lib_path)
-# self.run(input_pdb, output_lis, 21)
+# self.run(pdb_path, lis_path, 21)
 
 # TOPOTRAJ
 # topology = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/soh/1kx5soh_dry.prmtop'

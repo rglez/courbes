@@ -1,7 +1,7 @@
 # Created by roy.gonzalez-aleman at 04/04/2024
 import os
 import sys
-from os.path import basename
+from os.path import basename, join
 
 import courbes.commons as cmn
 from courbes import config
@@ -15,9 +15,11 @@ def run():
     # Prelude
     # raise if more than two arguments are passed
     if len(sys.argv) != 2:
-        raise ValueError('Incorrect number of arguments. Usage: courbes path-to-config.conf')
+        raise ValueError(
+            'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/roy.gonzalez-aleman/RoyHub/courbes/tests/examples/1kx5_WT.conf")
+    # args = config.Config("/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/polyAT/AA_pairs/traj13-27_1000ns/traj13-27_1000ns.conf")
+    # args = config.Config("/home/gonzalezroy/RoyHub/courbes/tests/examples/1kx5_SOH.conf")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 
@@ -35,7 +37,7 @@ def run():
                 frame.save_pdb(pdb_name)
                 # Run curves+
                 lis_name = f'tmp_{index}'
-                curves_man.run(pdb_name, lis_name, args.n_bases)
+                curves_man.run(pdb_name, lis_name, args.strands)
                 # Clean
                 os.remove(pdb_name)
 
@@ -57,3 +59,4 @@ def run():
     parsing.write_descriptors('groove', lis_parsed.descriptors_grooves)
     parsing.write_descriptors('backbone', lis_parsed.descriptors_backbones)
     parsing.write_descriptors('intra', lis_parsed.descriptors_bp_intras)
+    print(f"Normal termination for {sys.argv[1]}")
