@@ -2,7 +2,7 @@
 import configparser
 import os
 
-import commons as cmn
+import courbes.commons as cmn
 
 
 class Config:
@@ -13,7 +13,7 @@ class Config:
     def __init__(self, config_path):
         self.config_raw = cmn.check_path(config_path)
         self.config = self.read_config_file()
-        self.n_bases = None
+        self.strands = None
         self.lib_path = None
         self.curves_exe = None
         self.output_dir = None
@@ -32,7 +32,9 @@ class Config:
         Returns:
             a config object
         """
-        config_obj = configparser.ConfigParser(inline_comment_prefixes='#')
+        config_obj = configparser.ConfigParser(inline_comment_prefixes='#',
+                                               allow_no_value=True,
+                                               delimiters='=')
         config_obj.optionxform = str
         config_obj.read(self.config_raw)
         return config_obj
@@ -59,12 +61,14 @@ class Config:
         curves_path = self.config.get('curves', 'curves_exe')
         self.curves_exe = cmn.check_path(curves_path)
         self.lib_path = self.config.get('curves', 'lib_path')
-        self.n_bases = self.config.getint('curves', 'n_bases')
+        self.strands = '\n'.join(self.config['strands'])
+        # self.n_bases = self.config.getint('curves', 'n_bases')
 
 
 
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
-# conf_path = '/home/roy.gonzalez-aleman/RoyHub/courbes/tests/examples/1kx5.conf'
+# conf_path = "/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/onelesion/B-DNA-1000ns-35BP-GC/snapshots-B-DNA-1000ns-GC/snapshots-B-DNA-1000ns-GC.conf"
 # self = Config(conf_path)
+# print(self.strands)

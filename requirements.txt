@@ -8,4 +8,8 @@ setuptools~=68.2.2
 mdanalysis~=2.7.0
 prolif~=2.0.3
 scipy~=1.11.4
-pyna~=0.1.0a0
+
+courbes~=0.0.post1.dev5+g730b440.d20240716
+matplotlib~=3.8.4
+scikit-learn~=1.4.2
+sphinx~=7.3.7

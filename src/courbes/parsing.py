@@ -9,7 +9,7 @@ from os.path import join
 import numpy as np
 import pandas as pd
 
-import commons as cmn
+import courbes.commons as cmn
 
 sections = {
     '(A)': 'BP-Axis',
