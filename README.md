@@ -2,7 +2,7 @@
 
 > Automated Statistics Extraction from (Multi-Replica) MD Simulations with Curves+
 
-> [!CAUTION]
+> [!NOTE]
 > Please note that this project is still under development and is not yet ready for production use. We are working hard
 > to make it available as soon as possible. If you are interested in contributing to this project, please refer to
 > the [Contributing Guidelines](CONTRIBUTING.md).
