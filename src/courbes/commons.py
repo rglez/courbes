@@ -125,29 +125,6 @@ class CurvesWrapper:
         subprocess.run(command, shell=True)
         clean()
 
-    def run_old(self, pdb_path, lis_path, n_bases, numbering='default'):
-        """
-        Run curves+ on a given pdb file
-
-        Args:
-            pdb_path: path to input pdb
-            lis_path: pah to output .lis
-            n_bases: number of bases
-        """
-        # todo: generalize
-        init_strand = n_bases * 2
-        end_strand = n_bases + 1
-
-        command = f"""{self.exe_path} <<!
-        &inp file={pdb_path}, lis={lis_path},
-        lib={self.lib_path}, &end 
-        2 1 -1 0 0
-        1:{n_bases}
-        {init_strand}:{end_strand}
-        !"""
-        subprocess.run(command, shell=True)
-        clean()
-
 
 def slice_traj(topo, traj, selection, chunk_size, init=0, stride=1):
     """
@@ -183,7 +160,7 @@ def generic_matplotlib(width):
     plt.rcParams['figure.dpi'] = 600
     plt.rcParams['figure.figsize'] = width
     plt.rcParams["font.family"] = "Monospace"
-    plt.rcParams["font.size"] = 18
+    plt.rcParams["font.size"] = 14
     plt.rcParams['axes.linewidth'] = 1
 
 

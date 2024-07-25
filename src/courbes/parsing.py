@@ -5,6 +5,7 @@ Parser for single and multiple *.lis files yielded by the curves+ software
 import os
 from collections import defaultdict
 from os.path import join
+import re
 
 import numpy as np
 import pandas as pd
@@ -45,10 +46,10 @@ def get_dataframe_stats(df):
     """
     data = ['mean', 'std', 'min', 'max']
     try:
-        df_stats = df.describe().loc[data].round(2)
+        df_stats = df.astype(float).describe().loc[data].round(2)
         df_stats.loc['sem'] = df.sem()
         return df_stats
-    except KeyError:
+    except (KeyError, ValueError):
         return pd.DataFrame()
 
 
@@ -74,6 +75,8 @@ def write_descriptors(out_dir, descriptors):
     os.makedirs(out_dir, exist_ok=True)
 
     for descriptor in descriptors.keys():
+        if descriptor == 'bp_id':
+            continue
         # Treat other cases
         try:
             df = descriptors[descriptor].T
@@ -285,9 +288,18 @@ class CourbesParserSingle:
         lines_groove = self.raw_sections['Groove']
         params = lines_groove[1].split()[1:]
         groove = {}
+        pattern = r'\d*[A-Z]'
+        previous = None
         for line in lines_groove[2:]:
             splitted = line.split()
             level = float(splitted[0])
+
+            matches = re.findall(pattern, line)
+            if matches:
+                match = matches[0]
+                previous = match
+            else:
+                match = previous
 
             try:
                 # If pos 1 is not a letter, then parse from 1
@@ -299,6 +311,7 @@ class CourbesParserSingle:
 
             parsed = {params[i]: float(value) for i, value in
                       enumerate(values)}
+            parsed.update({'bp_id': match})
             groove.update({level: parsed})
 
         df = pd.DataFrame(groove).T
@@ -332,6 +345,13 @@ class CourbesParserMulti:
         self.descriptors_grooves = None
         self.descriptors_bp_inters = None
         self.descriptors_bp_axes = None
+
+        # Identifiers
+        self.ids_backbones = None
+        self.ids_bp_intras = None
+        self.ids_grooves = None
+        self.ids_bp_inters = None
+        self.ids_bp_axes = None
 
     def concat_info(self):
         """
@@ -420,6 +440,58 @@ class CourbesParserMulti:
             descriptors.update({descriptor: df})
         return descriptors
 
+    def get_identifiers(self):
+        """ Get identifiers of the descriptors"""
+        # Section A: BP-Axis
+        instances_bp = self.reference.bp_axis.id_bp
+        pattern_bp = r'(^[A-Z, -])\d+-([A-Z, -])'
+        matches_bp = [re.findall(pattern_bp, x) for x in instances_bp]
+        bp_ids = ['|'.join(x[0]) for x in matches_bp]
+        if instances_bp.shape[0] != len(bp_ids):
+            raise ValueError('Error parsing identifiers of bp_ids')
+        self.ids_bp_axes = bp_ids
+
+        # Section B: Intra-BP
+        key = list(self.reference.bp_intra.keys())[0]
+        instances_intra = self.reference.bp_intra[key].id_bp
+        matches_intra = [re.findall(pattern_bp, x) for x in instances_intra]
+        intra_ids = ['|'.join(x[0]) for x in matches_intra]
+        if instances_intra.shape[0] != len(intra_ids):
+            raise ValueError('Error parsing identifiers of intra_ids')
+        self.ids_bp_intras = intra_ids
+
+        # Section C: Inter-BP
+        instances_inter = self.reference.bp_inter.id_bp
+        pattern_inter = r'(^[A-Z, -])\d+/([A-Z, -])'
+        matches_inter = [re.findall(pattern_inter, x) for x in instances_inter]
+        inter_ids = ['|'.join(x[0]) for x in matches_inter]
+        if instances_inter.shape[0] != len(inter_ids):
+            raise ValueError('Error parsing identifiers of inter_ids')
+        self.ids_bp_inters = inter_ids
+
+        # Section D: Backbone
+        key = list(self.reference.backbone.keys())[0]
+        instances_backbone = self.reference.backbone[key].id_bp
+        pattern_backbone = r'(^[A-Z, -])\d+'
+        matches_backbone = [re.findall(pattern_backbone, x) for x in
+                            instances_backbone]
+        backbone_ids = ['|'.join(x) for x in matches_backbone]
+        if instances_backbone.shape[0] != len(backbone_ids):
+            raise ValueError('Error parsing identifiers of backbone_ids')
+        self.ids_backbones = backbone_ids
+
+        # Section E: Groove
+        instances_groove = self.reference.groove.bp_id
+        pattern_groove = r'(^[A-Z, -])'
+        matches_groove = [re.findall(pattern_groove, x) if isinstance(x, str) else [''] for x in instances_groove]
+        groove_ids = ['|'.join(x) for x in matches_groove]
+        if instances_groove.shape[0] != len(groove_ids):
+            raise ValueError('Error parsing identifiers of groove_ids')
+        self.ids_grooves = groove_ids
+
+
+
+# self.reference = CourbesParserSingle(lis_paths[0])
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
@@ -442,3 +514,7 @@ class CourbesParserMulti:
 #
 #
 # write_descriptors('/home/roy.gonzalez-aleman/RoyHub/courbes/', axis)
+
+# self = CourbesParserSingle(
+#     '/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/polyAT/AA_pairs/traj13-27_1000ns/tmp_998.lis',
+#     get_types=True)

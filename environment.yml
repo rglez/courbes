@@ -13,6 +13,7 @@ dependencies:
   - mdanalysis~=2.7.0
   - setuptools~=68.2.2
   - ipython~=8.22.2
+  - tqdm~=4.66.4
 
   - pip
   - tqdm

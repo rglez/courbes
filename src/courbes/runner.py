@@ -6,6 +6,7 @@ from os.path import basename, join
 import courbes.commons as cmn
 from courbes import config
 from courbes import parsing
+from courbes import plots as plts
 
 
 def run():
@@ -18,8 +19,7 @@ def run():
         raise ValueError(
             'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/polyAT/AA_pairs/traj13-27_1000ns/traj13-27_1000ns.conf")
-    # args = config.Config("/home/gonzalezroy/RoyHub/courbes/tests/examples/1kx5_SOH.conf")
+    # args = config.Config("/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes-plotted/polyAT/AA_pairs/traj15-25_1000ns/traj15-25_1000ns.conf")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 
@@ -49,6 +49,7 @@ def run():
     lis_parsed = parsing.CourbesParserMulti(lis_paths)
     lis_parsed.concat_info()
     lis_parsed.get_descriptors()
+    lis_parsed.get_identifiers()
 
     # Clean lis files
     [os.remove(lis) for lis in cmn.recursive_finder('*.lis')]
@@ -59,4 +60,20 @@ def run():
     parsing.write_descriptors('groove', lis_parsed.descriptors_grooves)
     parsing.write_descriptors('backbone', lis_parsed.descriptors_backbones)
     parsing.write_descriptors('intra', lis_parsed.descriptors_bp_intras)
+
+    # Plot stats and diff
+    identifiers = {
+        'intra': lis_parsed.ids_bp_intras,
+        'inter': lis_parsed.ids_bp_inters,
+        'backbone': lis_parsed.ids_backbones,
+        'groove': lis_parsed.ids_grooves,
+        'axis': lis_parsed.ids_bp_axes
+    }
+    if args.plot_stats:
+        plts.plot_stats(args.output_dir, identifiers)
+    if args.plot_diff:
+        tar_dir = args.output_dir
+        ref_dir = plts.is_courbes_dir(args.plot_diff)
+        plts.plot_diff(tar_dir, ref_dir, identifiers)
+
     print(f"Normal termination for {sys.argv[1]}")

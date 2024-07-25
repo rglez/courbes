@@ -23,6 +23,8 @@ class Config:
         self.stride = None
         self.topology = None
         self.first = None
+        self.plot_stats = None
+        self.plot_diff = None
         self.parse()
 
     def read_config_file(self):
@@ -46,6 +48,9 @@ class Config:
         # [general]
         self.output_dir = self.config.get('general', 'output_dir')
         os.makedirs(self.output_dir, exist_ok=True)
+        self.plot_stats = self.config.getboolean('general', 'plot_stats')
+        self.plot_diff = cmn.check_path(
+            self.config.get('general', 'plot_diff'))
 
         # [trajectory]
         self.first = self.config.getint('trajectory', 'first')
@@ -64,11 +69,9 @@ class Config:
         self.strands = '\n'.join(self.config['strands'])
         # self.n_bases = self.config.getint('curves', 'n_bases')
 
-
-
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
-# conf_path = "/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/onelesion/B-DNA-1000ns-35BP-GC/snapshots-B-DNA-1000ns-GC/snapshots-B-DNA-1000ns-GC.conf"
+# conf_path = "/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes/polyAT/AA_pairs/traj13-27_1000ns/traj13-27_1000ns.conf"
 # self = Config(conf_path)
 # print(self.strands)

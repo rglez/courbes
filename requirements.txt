@@ -13,3 +13,5 @@ courbes~=0.0.post1.dev5+g730b440.d20240716
 matplotlib~=3.8.4
 scikit-learn~=1.4.2
 sphinx~=7.3.7
+
+tqdm~=4.66.4
