@@ -4,11 +4,28 @@ import os
 import pickle
 import subprocess
 from collections import defaultdict
+from os.path import basename
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mdtraj as md
 import pandas as pd
+
+
+def sort_files_by_extension(extension):
+    """
+    Sort files by extension
+
+    Args:
+        extension: file extension to sort
+
+    Returns:
+        sorted files by extension
+    """
+    files_raw = list(recursive_finder(f'*.{extension}'))
+    sort_lamba = lambda x: int(basename(x).split('_')[1].split('.')[0])
+    files_sorted = sorted(files_raw, key=sort_lamba)
+    return files_sorted
 
 
 def dataframe_to_txt(DataFrame, out_name, index=False, header=False):
@@ -80,7 +97,7 @@ def clean():
     """
     Clean curves+ output files not needed for analyses
     """
-    extensions = ['*.cda', '*_B.pdb', '*_X.pdb']
+    extensions = ['*.cda', '*_B.pdb']
     trash = [recursive_finder(x) for x in extensions]
     [os.remove(y) for x in trash for y in x]
 

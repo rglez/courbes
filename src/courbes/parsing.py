@@ -9,8 +9,12 @@ import re
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 import courbes.commons as cmn
+import prody as prd
+
+prd.LOGGER.verbosity = 'none'
 
 sections = {
     '(A)': 'BP-Axis',
@@ -19,6 +23,35 @@ sections = {
     '(D)': 'Backbone',
     '(E)': 'Groove',
 }
+
+
+def parse_pdb_files(pdb_paths):
+    """
+    Parse a set of pdb files and export them as a dcd file
+
+    Args:
+        pdb_paths: list of pdb files to parse
+
+    Returns:
+        a tuple with the parsed pdb and dcd file
+    """
+    # export as dcd file
+    ensemble = prd.Ensemble()
+    for pdb in tqdm(pdb_paths, desc='Parsing pdb files'):
+        parsed = prd.parsePDB(pdb)
+        coords = parsed.getCoords()
+        indices = np.where(~np.isnan(coords[:, 0]))[0]
+        ensemble.addCoordset(coords[indices])
+
+    # write ensemble as dcd file
+    ensemble.setAtoms(parsed[indices])
+    ensemble.setCoords(coords[indices])
+
+    # clean pdb files
+    [os.remove(pdb) for pdb in pdb_paths]
+    dcd = prd.writeDCD('ensemble.dcd', ensemble)
+    pdb = prd.writePDB('ensemble.pdb', parsed[indices])
+    return pdb, dcd
 
 
 def get_start_line(string_char, n):
@@ -483,15 +516,15 @@ class CourbesParserMulti:
         # Section E: Groove
         instances_groove = self.reference.groove.bp_id
         pattern_groove = r'(^[A-Z, -])'
-        matches_groove = [re.findall(pattern_groove, x) if isinstance(x, str) else [''] for x in instances_groove]
+        matches_groove = [
+            re.findall(pattern_groove, x) if isinstance(x, str) else [''] for x
+            in instances_groove]
         groove_ids = ['|'.join(x) for x in matches_groove]
         if instances_groove.shape[0] != len(groove_ids):
             raise ValueError('Error parsing identifiers of groove_ids')
         self.ids_grooves = groove_ids
 
-
-
-# self.reference = CourbesParserSingle(lis_paths[0])
+# self = CourbesParserSingle(lis_paths[0])
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
@@ -502,7 +535,7 @@ class CourbesParserMulti:
 # lis_traj = sorted(lis_traj_raw,
 #                   key=lambda x: int(basename(x).split('-')[1].split('.')[0]))
 #
-# self = CourbesParserMulti(lis_traj)
+# self = CourbesParserMulti(lis_paths)
 # self.concat_info()
 # self.get_descriptors()
 #

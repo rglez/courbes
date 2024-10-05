@@ -3,6 +3,8 @@ import os
 import sys
 from os.path import basename, join
 
+from tqdm import tqdm
+
 import courbes.commons as cmn
 from courbes import config
 from courbes import parsing
@@ -42,17 +44,17 @@ def run():
                 os.remove(pdb_name)
 
     # Launch parsing of lis files
-    lis_paths_raw = list(cmn.recursive_finder('*.lis'))
-    lis_paths = sorted(lis_paths_raw,
-                       key=lambda x: int(
-                           basename(x).split('_')[1].split('.')[0]))
+    lis_paths = cmn.sort_files_by_extension('lis')
     lis_parsed = parsing.CourbesParserMulti(lis_paths)
     lis_parsed.concat_info()
     lis_parsed.get_descriptors()
     lis_parsed.get_identifiers()
-
     # Clean lis files
     [os.remove(lis) for lis in cmn.recursive_finder('*.lis')]
+
+    # Launch parsing of X_pdb files
+    pdb_paths = cmn.sort_files_by_extension('pdb')
+    parsing.parse_pdb_files(pdb_paths)
 
     # Write descriptors
     parsing.write_descriptors('axis', lis_parsed.descriptors_bp_axes)
