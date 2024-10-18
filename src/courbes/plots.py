@@ -62,9 +62,9 @@ def plot_table(table, stat_file, base_pairs, suffix):
     except ValueError:
         return None
 
-    y_axis = np.asarray(list(map(float, table.mean().tolist())))
-    errors1 = np.asarray(list(map(float, table.std().tolist())))
-    errors2 = np.asarray(list(map(float, table.sem().tolist())))
+    y_axis = np.asarray(list(map(float, table.loc['mean'].tolist())))
+    errors1 = np.asarray(list(map(float, table.loc['std'].tolist())))
+    errors2 = np.asarray(list(map(float, table.loc['sem'].tolist())))
 
 
     title = os.path.basename(stat_file).replace('_stats.txt', '')
