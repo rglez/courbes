@@ -49,8 +49,9 @@ class Config:
         self.output_dir = self.config.get('general', 'output_dir')
         os.makedirs(self.output_dir, exist_ok=True)
         self.plot_stats = self.config.getboolean('general', 'plot_stats')
-        self.plot_diff = cmn.check_path(
-            self.config.get('general', 'plot_diff'))
+        plot_diff = self.config.get('general', 'plot_diff')
+        if plot_diff != 'False':
+            self.plot_diff = cmn.check(plot_diff)
 
         # [trajectory]
         self.first = self.config.getint('trajectory', 'first')
