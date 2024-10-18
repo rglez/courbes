@@ -51,7 +51,7 @@ class Config:
         self.plot_stats = self.config.getboolean('general', 'plot_stats')
         plot_diff = self.config.get('general', 'plot_diff')
         if plot_diff != 'False':
-            self.plot_diff = cmn.check(plot_diff)
+            self.plot_diff = cmn.check_path(plot_diff)
 
         # [trajectory]
         self.first = self.config.getint('trajectory', 'first')
