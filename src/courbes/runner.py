@@ -19,7 +19,7 @@ def run():
         raise ValueError(
             'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/gonzalezroy/RoyHub/NUC-STRESS-RGA/data/lessions-courbes-plotted/polyAT/AA_pairs/traj15-25_1000ns/traj15-25_1000ns.conf")
+    # args = config.Config("/home/gonzalezroy/RoyHub/courbes/data/lesions-courbes-plots/polyAT/AA_pairs/traj15-25_1000ns/traj15-25_1000ns.conf")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 
