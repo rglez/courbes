@@ -1,27 +1,23 @@
 # Created by roy.gonzalez-aleman at 04/04/2024
 import os
 import sys
-from os.path import basename, join
-
-from tqdm import tqdm
 
 import courbes.commons as cmn
-from courbes import config
-from courbes import parsing
-from courbes import plots as plts
+from courbes import config, parsing, plots as plts
 
 
 def run():
     """
     Run the Courbes+ analysis for a set of trajectories.
     """
+    print('Running Courbes+ analysis')
     # Prelude
     # raise if more than two arguments are passed
     if len(sys.argv) != 2:
         raise ValueError(
             'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/rglez/Dropbox/RoyHub/lessions/data/raw/lesions-courbes-plots/onelesion/B-DNA-1000ns-35BP-GC/snapshots-B-DNA-1000ns-GC/snapshots-B-DNA-1000ns-GC.conf")
+    # args = config.Config("/home/rglez/Dropbox/RoyHub/lessions/data/plots/onelesion/B-DNA-1000ns-35BP-GC/snapshots-B-DNA-1000ns-GC/snapshots-B-DNA-1000ns-GC.conf")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 
@@ -51,10 +47,6 @@ def run():
     lis_parsed.get_identifiers()
     # Clean lis files
     [os.remove(lis) for lis in cmn.recursive_finder('*.lis')]
-
-    # Launch parsing of X_pdb files
-    pdb_paths = cmn.sort_files_by_extension('pdb')
-    parsing.parse_pdb_files(pdb_paths)
 
     # Write descriptors
     parsing.write_descriptors('axis', lis_parsed.descriptors_bp_axes)

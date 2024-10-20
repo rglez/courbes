@@ -140,7 +140,7 @@ class CurvesWrapper:
         {strands_lines}
         !"""
         subprocess.run(command, shell=True)
-        # clean()
+        clean()
 
 
 def slice_traj(topo, traj, selection, chunk_size, init=0, stride=1):
