@@ -76,6 +76,9 @@ def run():
     if args.plot_diff:
         tar_dir = args.output_dir
         ref_dir = plts.is_courbes_dir(args.plot_diff)
-        plts.plot_diff(tar_dir, ref_dir, identifiers)
+        if ref_dir:
+            plts.plot_diff(tar_dir, ref_dir, identifiers)
+        else:
+            raise ValueError(f'No stats files found in {args.plot_diff}')
 
     print(f"Normal termination for {sys.argv[1]}")
