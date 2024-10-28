@@ -1,4 +1,8 @@
-# courbes
+# courbes 
+
+[![DOI](https://zenodo.org/badge/781865659.svg)](https://doi.org/10.5281/zenodo.14003027)
+
+
 
 > Automated Statistics Extraction from (Multi-Replica) MD Simulations with Curves+
 
