@@ -17,7 +17,7 @@ def run():
         raise ValueError(
             'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/rglez/Dropbox/RoyHub/lessions/data/plots/onelesion/B-DNA-1000ns-35BP-GC/snapshots-B-DNA-1000ns-GC/snapshots-B-DNA-1000ns-GC.conf")
+    # args = config.Config("/home/gonzalezroy/Manue-Roy/config.cfg")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 

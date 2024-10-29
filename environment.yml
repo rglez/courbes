@@ -3,29 +3,28 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python==3.10
-  - numpy~=1.26.4
-  - pandas~=2.2.1
-  - mdtraj~=1.9.9
-  - importlib_metadata~=7.1.0
-  - scipy~=1.11.4
-  - prolif~=2.0.3
-  - mdanalysis~=2.7.0
-  - setuptools~=68.2.2
-  - ipython~=8.22.2
-  - tqdm~=4.66.4
-
-  - pip
-  - tqdm
-  - matplotlib
-  - pytest
-  - pytest-cov
-  - tox
-  - pre_commit
-  - nbdime
-  - nbstripout
-  - sphinx
-  - recommonmark
+  - python==3.11
+  - numpy==1.23.5
+  - pandas==2.2.2
+  - mdtraj==1.9.9
+  - importlib_metadata==7.1.0
+  - scipy==1.11.4
+  - prolif==2.0.3
+  - mdanalysis==2.7.0
+  - setuptools==68.2.2
+  - ipython==8.22.2
+  - tqdm==4.66.5
+  - netcdf4==1.6.2
+  - pip ==24.2
+  - matplotlib==3.9.2
+  - pytest==7.4.4
+  - pytest-cov==4.1.0
+  - tox ==4.23.2
+  - nbdime==4.0.1
+  - nbstripout==0.7.1
+  - sphinx==7.3.7
+  - recommonmark==0.6.0
 
   - pip:
       - -e .  # install git checkout of courbes in editable mode
+      - prody==2.4.1

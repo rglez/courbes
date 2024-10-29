@@ -190,6 +190,9 @@ class CourbesParserSingle:
 
         # Parse descriptors
         bp_axis_lines = self.raw_sections['BP-Axis']
+        if not bp_axis_lines:
+            raise ValueError('No bp-axis section found in lis file')
+
         bp_axis = defaultdict(list)
         for line in bp_axis_lines[:-1]:
             splitted = line.split()
@@ -219,6 +222,9 @@ class CourbesParserSingle:
         # Parse descriptors per strand
         strands = {}
         lines_intra_bp = self.raw_sections['Intra-BP']
+        if not lines_intra_bp:
+            raise ValueError('No intra-bp section found in lis file')
+
         for line in lines_intra_bp[:-1]:
             if line.startswith('Strands'):
                 strands_name = '_'.join(line.split()[:2])
@@ -253,6 +259,9 @@ class CourbesParserSingle:
         # Parse descriptors
         inter_bp = defaultdict(list)
         lines_inter_bp = self.raw_sections['Inter-BP']
+        if not lines_inter_bp:
+            raise ValueError('No inter-bp section found in lis file')
+
         for line in lines_inter_bp[1:-1]:
             splitted = line.split()
             inter_bp['n_bp'].append(int(splitted[0][:-1]))
@@ -283,6 +292,9 @@ class CourbesParserSingle:
         # Parse descriptors per strand
         strands = {}
         lines_backbone = self.raw_sections['Backbone']
+        if not lines_backbone:
+            raise ValueError('No backbone section found in lis file')
+
         for line in lines_backbone:
             if line.startswith('Strand'):
                 strands_name = '_'.join(line.split()[:2])
@@ -319,6 +331,9 @@ class CourbesParserSingle:
             a dataframe of descriptors value per level
         """
         lines_groove = self.raw_sections['Groove']
+        if not lines_groove:
+            raise ValueError('No groove section found in lis file')
+
         params = lines_groove[1].split()[1:]
         groove = {}
         pattern = r'\d*[A-Z]'
@@ -524,10 +539,19 @@ class CourbesParserMulti:
             raise ValueError('Error parsing identifiers of groove_ids')
         self.ids_grooves = groove_ids
 
-# self = CourbesParserSingle(lis_paths[0])
 # =============================================================================
 # Debugging & Testing Area
 # =============================================================================
+# lis_paths = cmn.sort_files_by_extension('lis')
+# self = CourbesParserMulti(lis_paths)
+# self.concat_info()
+# self.get_descriptors()
+# lis_parsed.get_identifiers()
+
+# lis_path = lis_paths[0]
+# self = CourbesParserSingle(lis_path)
+
+
 # from os.path import basename
 # input_dir = '/home/roy.gonzalez-aleman/RoyHub/NUC-STRESS-RGA/data/raw/scripts-NCP/trajectories/sno/MD1/'
 #

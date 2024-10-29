@@ -1,13 +1,14 @@
 # Created by gonzalezroy at 7/18/24
 import os
-from os.path import basename, split
+from os.path import split
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import tqdm
-import matplotlib as mpl
-from courbes import commons as cmn
 from matplotlib.markers import MarkerStyle
+
+from courbes import commons as cmn
 
 mpl.use('Qt5Agg')
 
@@ -54,8 +55,8 @@ def plot_table(table, stat_file, base_pairs, suffix):
         'U': MarkerStyle('s', fillstyle='none'),  # Filled star
         '-': MarkerStyle('x', fillstyle='none')  # Unfilled x
     }
-    trash_markers = ['+', 'x', '1', '2', '3', '4', '8', 's', 'p', 'P', 'h',
-                     'H']
+    trash_markers = ['o', '^', 'v', '<', '>', 's', 'D', 'p', 'h', '+', 'x',
+                     '*', '.', ',', 'd', 'x']
 
     try:
         x_axis = np.asarray(list(map(float, table.columns.tolist())))
@@ -66,18 +67,17 @@ def plot_table(table, stat_file, base_pairs, suffix):
     errors1 = np.asarray(list(map(float, table.loc['std'].tolist())))
     errors2 = np.asarray(list(map(float, table.loc['sem'].tolist())))
 
-
     title = os.path.basename(stat_file).replace('_stats.txt', '')
     plt.title(title, fontsize='x-large')
     plt.xlabel('Base pair index', fontweight='bold', fontsize='medium')
     plt.ylabel('Descriptor Value', fontweight='bold', fontsize='medium')
 
-
     bp_array = np.asarray(base_pairs)
     uniques = np.unique(bp_array, return_index=True)[0]
 
     if y_axis.size != len(base_pairs):
-        raise ValueError('The number of base pairs does not match the number of values')
+        raise ValueError(
+            'The number of base pairs does not match the number of values')
 
     # change plot size to have a wide view of the data
     # plt.figure(figsize=(10, 5))
@@ -154,7 +154,6 @@ def plot_diff(tar_dir, ref_dir, identifiers):
         dir_name = split(os.path.dirname(tar_dict[tar_file]))[1]
         base_pairs = identifiers.get(dir_name)
         plot_table(diff_table, tar_dict[tar_file], base_pairs, suffix='diff')
-
 
 # =============================================================================
 #
