@@ -3,6 +3,7 @@ import sys
 from os.path import basename
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from courbes import commons as cmn
@@ -11,8 +12,8 @@ from courbes import commons as cmn
 def plot_violins():
     arguments = sys.argv
     print('Running violins')
-    init = 0
-    last = 10
+    init = 5
+    last = 15
 
     if len(arguments) == 4:
         courbes_path = arguments[1]
@@ -30,32 +31,41 @@ def plot_violins():
         print('Usage: violins path-to-courbes-directory [init] [last]')
         sys.exit()
 
+    init_0 = init - 1
+    last_0 = last
     # Get all the txt files in the courbes directory
     all_txt = list(cmn.recursive_finder('*.txt', courbes_path))
     txts = [x for x in all_txt if not x.endswith(('stats.txt', 'diff.txt'))]
     print(f'Found {len(txts)} txt files in {courbes_path}')
 
+    cmn.generic_matplotlib((9, 7))
     # Load your data from a CSV or any other tabular format
     for txt in txts:
         data = pd.read_table(txt, sep='\s+', skiprows=1, index_col=0,
                              header=None)
-        data = data.iloc[:, init:last]
+        data = data.iloc[:, init_0:last_0]
 
         # Create a violin plot of each column
         try:
-            plt.violinplot(data.values, showmeans=True)
+            parts = plt.violinplot(data.values, showmeans=True,
+                                   showextrema=False)
+            for pc in parts['bodies']:
+                pc.set_linewidth(0.2)  # Adjust thickness (default is around 1.0)
+
 
             # Customize the x-ticks to match your column names
-            plt.xticks(ticks=range(1, data.shape[1] + 1), labels=data.columns)
+            plt.xticks(np.arange(1, len(data.columns) + 1),
+                       [str(x) for x in data.columns],
+                       rotation=45)
 
             # Add labels and title
             plot_name = basename(txt).split('.txt')[0]
-            plt.title(f'Violin Plot of {plot_name}', fontsize=16)
-            plt.xlabel('Columns', fontsize=14)
-            plt.ylabel('Values', fontsize=14)
+            plt.title(f'{plot_name}')
+            plt.xlabel('Base Pairs')
+            plt.ylabel('Values')
 
             # Save the plot
-            out_name = txt.replace('.txt', '_violin.png')
+            out_name = txt.replace('.txt', '_violin.svg')
             plt.tight_layout()
             plt.savefig(out_name)
             plt.close()  # Close the figure to free up memory
