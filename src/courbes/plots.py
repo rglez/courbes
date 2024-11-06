@@ -10,7 +10,7 @@ from matplotlib.markers import MarkerStyle
 
 from courbes import commons as cmn
 
-mpl.use('Qt5Agg')
+# mpl.use('Qt5Agg')
 
 
 def is_courbes_dir(path):
