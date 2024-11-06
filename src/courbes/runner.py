@@ -6,6 +6,8 @@ import courbes.commons as cmn
 from courbes import config, parsing, plots as plts
 
 
+
+
 def run():
     """
     Run the Courbes+ analysis for a set of trajectories.
@@ -25,19 +27,32 @@ def run():
     index = 0
     for traj in args.trajs:
         sliced_trajs = cmn.slice_traj(args.topology, traj, args.selection,
-                                      args.chunk_size, init=args.first,
-                                      stride=args.stride)
-        for i, sub_traj in enumerate(sliced_trajs):
-            for j, frame in enumerate(sub_traj):
-                index += 1
-                # Output frame.pdb
-                pdb_name = f'tmp_{index}.pdb'
-                frame.save_pdb(pdb_name)
-                # Run curves+
-                lis_name = f'tmp_{index}'
-                curves_man.run(pdb_name, lis_name, args.strands)
-                # Clean
-                os.remove(pdb_name)
+                                      init=args.first, stride=args.stride)
+
+        # If last is -1, process all frames
+        if args.last == -1:
+            for sub_traj in sliced_trajs:
+                for frame in sub_traj:
+                    index += 1
+                    cmn.process_frame(frame, index, curves_man, args)
+
+        # Else, process frames from first to last with stride
+        else:
+            current_frame = args.first
+            for sub_traj in sliced_trajs:
+                for frame in sub_traj:
+
+                    # Stop the subtraj (chunk) loop if current_frame > last
+                    if current_frame > args.last:
+                        break
+
+                    index += 1
+                    cmn.process_frame(frame, index, curves_man, args)
+                    current_frame += args.stride
+
+                # Stop the traj loop if current_frame > last
+                if current_frame > args.last:
+                    break
 
     # Launch parsing of lis files
     lis_paths = cmn.sort_files_by_extension('lis')

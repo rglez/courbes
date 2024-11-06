@@ -11,6 +11,7 @@ class Config:
     """
 
     def __init__(self, config_path):
+        self.last = None
         self.config_raw = cmn.check_path(config_path)
         self.config = self.read_config_file()
         self.strands = None
@@ -19,7 +20,7 @@ class Config:
         self.output_dir = None
         self.trajs = None
         self.selection = None
-        self.chunk_size = None
+        # self.chunk_size = None
         self.stride = None
         self.topology = None
         self.first = None
@@ -56,7 +57,8 @@ class Config:
         # [trajectory]
         self.first = self.config.getint('trajectory', 'first')
         self.stride = self.config.getint('trajectory', 'stride')
-        self.chunk_size = self.config.getint('trajectory', 'chunk_size')
+        # self.chunk_size = self.config.getint('trajectory', 'chunk_size')
+        self.last = self.config.getint('trajectory', 'last')
         self.selection = self.config.get('trajectory', 'selection')
         topology = self.config.get('trajectory', 'topology')
         self.topology = cmn.check_path(topology)
