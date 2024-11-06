@@ -143,7 +143,7 @@ class CurvesWrapper:
         clean()
 
 
-def slice_traj(topo, traj, selection, chunk_size, init=0, stride=1):
+def slice_traj(topo, traj, selection, init=0, stride=1):
     """
     Slice a big trajectory into chunks to avoid RAM depletion
 
@@ -160,7 +160,7 @@ def slice_traj(topo, traj, selection, chunk_size, init=0, stride=1):
     """
     ref_frame = next(md.iterload(traj, 1, top=topo))
     sele = ref_frame.topology.select(selection)
-    iter_traj = md.iterload(traj, chunk_size, top=topo, skip=init,
+    iter_traj = md.iterload(traj, top=topo, skip=init,
                             stride=stride)
 
     for chunk_traj in iter_traj:
@@ -229,6 +229,22 @@ def unpickle_from_file(file_name):
     with open(file_name, 'rb') as file:
         data = pickle.load(file)
     return data
+
+
+def process_frame(frame, index, curves_man, args):
+    """
+    Process a frame using curves+
+
+    Args:
+        frame: mdtraj frame
+        index: index of the frame
+        curves_man: CurvesWrapper object
+        args: courbes+ arguments
+    """
+    pdb_name = f'tmp_{index}.pdb'
+    frame.save_pdb(pdb_name)
+    curves_man.run(pdb_name, f'tmp_{index}', args.strands)
+    os.remove(pdb_name)
 
 # =============================================================================
 # Debugging & Testing Area
