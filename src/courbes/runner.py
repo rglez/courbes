@@ -29,21 +29,29 @@ def run():
         sliced_trajs = cmn.slice_traj(args.topology, traj, args.selection,
                                       init=args.first, stride=args.stride)
 
+        # If last is -1, process all frames
         if args.last == -1:
             for sub_traj in sliced_trajs:
                 for frame in sub_traj:
                     index += 1
                     cmn.process_frame(frame, index, curves_man, args)
+
+        # Else, process frames from first to last with stride
         else:
-            current_frame = 0
+            current_frame = args.first
             for sub_traj in sliced_trajs:
                 for frame in sub_traj:
-                    if current_frame >= args.last:
+
+                    # Stop the subtraj (chunk) loop if current_frame > last
+                    if current_frame > args.last:
                         break
+
                     index += 1
                     cmn.process_frame(frame, index, curves_man, args)
                     current_frame += args.stride
-                if current_frame >= args.last:
+
+                # Stop the traj loop if current_frame > last
+                if current_frame > args.last:
                     break
 
     # Launch parsing of lis files
