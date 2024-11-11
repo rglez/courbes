@@ -80,4 +80,4 @@ max_max = inter_df.max().index[inter_df.max().argmax()]
 
 inter_df.sort_values(by=['WT'], ascending=False, inplace=True)
 table_name = join(out_dir, 'interactions_table_full.txt')
-cmn.dataframe_to_txt(inter_df.round(2), table_name, header=True, index=True)
+cmn.dataframe_to_txt(inter_df.round(4), table_name, header=True, index=True)

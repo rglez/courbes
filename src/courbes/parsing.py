@@ -79,7 +79,7 @@ def get_dataframe_stats(df):
     """
     data = ['mean', 'std', 'min', 'max']
     try:
-        df_stats = df.astype(float).describe().loc[data].round(2)
+        df_stats = df.astype(float).describe().loc[data].round(4)
         df_stats.loc['sem'] = df.sem()
         return df_stats
     except (KeyError, ValueError):
