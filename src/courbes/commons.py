@@ -231,6 +231,24 @@ def unpickle_from_file(file_name):
     return data
 
 
+def save_mdtraj(parsed, final_name):
+    """
+    Save a mdtraj object to a pdb file
+
+    Args:
+        parsed (mdtraj.Trajectory): mdtraj object to save
+        final_name (str): path to the output pdb file
+    """
+    try:
+        parsed.save(final_name)
+    except ValueError:
+        print(
+            f'Unitcell angles for traj {final_name} are:'
+            f' {parsed.unitcell_angles}.\n Resetting to [90, 90, 90]')
+        parsed.unitcell_angles = [90, 90, 90]
+        parsed.save(final_name)
+
+
 def process_frame(frame, index, curves_man, args):
     """
     Process a frame using curves+
@@ -242,7 +260,7 @@ def process_frame(frame, index, curves_man, args):
         args: courbes+ arguments
     """
     pdb_name = f'tmp_{index}.pdb'
-    frame.save_pdb(pdb_name)
+    save_mdtraj(frame, pdb_name)
     curves_man.run(pdb_name, f'tmp_{index}', args.strands)
     os.remove(pdb_name)
 
