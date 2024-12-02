@@ -97,7 +97,7 @@ def clean():
     """
     Clean curves+ output files not needed for analyses
     """
-    extensions = ['*.cda', '*_B.pdb']
+    extensions = ['*.cda']
     trash = [recursive_finder(x) for x in extensions]
     [os.remove(y) for x in trash for y in x]
 

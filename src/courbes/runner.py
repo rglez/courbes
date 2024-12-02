@@ -61,7 +61,7 @@ def run():
     lis_parsed.get_descriptors()
     lis_parsed.get_identifiers()
     # Clean lis files
-    [os.remove(lis) for lis in cmn.recursive_finder('*.lis')]
+    # [os.remove(lis) for lis in cmn.recursive_finder('*.lis')]
 
     # Write descriptors
     parsing.write_descriptors('axis', lis_parsed.descriptors_bp_axes)
