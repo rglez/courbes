@@ -164,7 +164,7 @@ def slice_traj(topo, traj, selection, init=0, stride=1):
                             stride=stride)
 
     for chunk_traj in iter_traj:
-        yield chunk_traj.restrict_atoms(sele)
+        yield chunk_traj.atom_slice(sele)
 
 
 def generic_matplotlib(width):

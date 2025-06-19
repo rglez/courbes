@@ -19,7 +19,7 @@ def run():
         raise ValueError(
             'Incorrect number of arguments. Usage: courbes path-to-config.conf')
     args = config.Config(sys.argv[1])
-    # args = config.Config("/home/gonzalezroy/Manue-Roy/config.cfg")
+    # args = config.Config("/media/rglez/Roy2TB/Dropbox/RoyData/mdscripts/nuc-stress/courbes-full/DrHU-x2-4-U1/DrHU-x2-4-U1.cfg")
     os.chdir(args.output_dir)
     curves_man = cmn.CurvesWrapper(args.curves_exe, args.lib_path)
 
